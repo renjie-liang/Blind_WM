@@ -1,11 +1,13 @@
+
 import torch
 import torch.nn as nn
 import torchvision.models as models
 
+
+
 def conv1x1(in_planes, out_planes, stride=1):
     """1x1 convolution"""
     return nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=stride, bias=False)
-
 
 class DilationBlock(nn.Module):
     def __init__(self, in_channels, out_channels, downsample = None, dilation = 1):
@@ -36,6 +38,7 @@ class DilationBlock(nn.Module):
         out = self.relu(out)
         return out
         
+
 class my_resnet5_7(nn.Module):
     def __init__(self):
         super(my_resnet5_7, self).__init__()
@@ -66,3 +69,46 @@ class my_resnet5_7(nn.Module):
         out = self.layer7(out)
 #         out = self.layer6(out)
         return out
+
+
+resnet18_model=models.resnet18(pretrained=True)
+
+    
+class resnet18_dilation(nn.Module):
+    def __init__(self, res_model = resnet18_model):
+        super(resnet18_dilation, self).__init__()
+        
+        self.layers_0_4 = torch.nn.Sequential(*list(res_model.children())[:5])
+        self.layers_5_7 = my_resnet5_7()
+        
+    def forward(self, x):
+        out = self.layers_0_4(x)
+        out = self.layers_5_7(out)
+        return out
+
+
+
+
+def main():
+    model = resnet18_dilation()
+    model=model.eval()
+
+    input_img = torch.rand([2, 3, 64, 64])
+    output_img = model(input_img)
+    print('input size: ', input_img.size())
+    print('output size: ', output_img.size())
+    print()
+
+    input_img = torch.rand([2, 3, 128, 128])
+    output_img = model(input_img)
+    print('input size: ', input_img.size())
+    print('output size: ', output_img.size())
+    print()
+
+
+
+
+
+if __name__ == '__main__':
+    main()
+
