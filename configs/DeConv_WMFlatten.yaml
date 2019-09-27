@@ -1,0 +1,30 @@
+MODEL:
+  ENCODER_NAME: DeConv_WMFlatten
+  DECODER_NAME: DeConv_WMFlatten_Decoder
+  NOSIER_NAME: BASE_Noiser
+  IMG_LOSS_NAME: MSELoss
+  WM_LOSS_NAME: CrossEntropyLoss
+  ENCODER_LOSS: 0.1
+  DECODER_LOSS: 1
+
+DATA_LOADER:
+  DATA_DIR:  ../datasets
+
+Noiser:
+  SET_LIST: crop((0.2,0.3),(0.4,0.5))+cropout((0.11,0.22),(0.33,0.44))+dropout(0.2,0.3)+jpeg()
+
+
+DATA_SET:
+  H_IMG: 128
+  W_IMG: 128
+  H_WM: 4
+  W_WM: 4
+
+TRAIN:
+  EPOCHS: 100
+  DATA_DIR: ../datasets
+
+DeConv:
+  WMFlatten:
+    KERNEL_SIZE: 1
+

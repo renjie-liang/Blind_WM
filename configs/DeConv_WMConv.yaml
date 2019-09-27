@@ -1,0 +1,32 @@
+MODEL:
+  ENCODER_NAME: DeConv_WMConv
+  DECODER_NAME: DeConv_Decoder_WM
+  NOSIER_NAME: BASE_Noiser
+  LOSS_NAME: MSELoss
+  ENCODER_LOSS: 0.1
+  DECODER_LOSS: 1
+
+DATA_LOADER:
+  DATA_DIR:  ../datasets
+
+Noiser:
+  SET_LIST: crop((0.2,0.3),(0.4,0.5))+cropout((0.11,0.22),(0.33,0.44))+dropout(0.2,0.3)+jpeg()
+
+
+DATA_SET:
+  H_IMG: 128
+  W_IMG: 128
+  H_WM: 16
+  W_WM: 16
+
+TRAIN:
+  EPOCHS: 100
+  DATA_DIR: ../datasets
+
+
+DeConv:
+  WMConv_ENCODER:
+    WM_LAYERS_NUM: 3
+  WMConv_DECODER:
+    WM_LAYERS_NUM : 0
+

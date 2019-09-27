@@ -4,21 +4,26 @@ import torch.nn as nn
 import torchvision.models as models
 
 
+dilation_list = [1, 2, 5, 1, 2, 5]
 
 def conv1x1(in_planes, out_planes, stride=1):
     """1x1 convolution"""
     return nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=stride, bias=False)
 
 class DilationBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, downsample = None, dilation = 1):
+    def __init__(self, in_channels, out_channels, downsample = None, dilation_index = 0):
         super(DilationBlock, self).__init__()
         self.conv1 = nn.Conv2d(in_channels, out_channels,
-                          kernel_size = 3, stride=1, padding=dilation, dilation=dilation)
+                          kernel_size = 3, stride=1, 
+                          padding=dilation_list[dilation_index], 
+                          dilation=dilation_list[dilation_index])
         self.bn1 =  nn.BatchNorm2d(out_channels)
         self.relu = nn.ReLU(inplace = True)
         
         self.conv2 =  nn.Conv2d(out_channels, out_channels,
-                          kernel_size = 3, stride=1, padding=dilation, dilation=dilation)
+                          kernel_size = 3, stride=1, 
+                          padding=dilation_list[dilation_index + 1], 
+                          dilation=dilation_list[dilation_index + 1])
         self.bn2 =  nn.BatchNorm2d(out_channels)
         
         self.downsample = downsample
@@ -37,7 +42,6 @@ class DilationBlock(nn.Module):
         out += identity
         out = self.relu(out)
         return out
-        
 
 class my_resnet5_7(nn.Module):
     def __init__(self):
@@ -57,10 +61,10 @@ class my_resnet5_7(nn.Module):
                 conv1x1(self.channels, out_channels , stride = 1),
                 nn.BatchNorm2d(out_channels),)
         layers = []
-        layers.append(block(self.channels, out_channels, downsample, dilation = 2))
+        layers.append(block(self.channels, out_channels, downsample, dilation_index = 0))
         self.channels = out_channels
         for _ in range(1, blocks):
-            layers.append(block(out_channels, out_channels))
+            layers.append(block(out_channels, out_channels, dilation_index = 2))
         return nn.Sequential(*layers)
     
     def forward(self,x):

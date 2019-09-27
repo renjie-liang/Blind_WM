@@ -1,0 +1,32 @@
+MODEL:
+  ENCODER_NAME: U_NET2
+  DECODER_NAME: U_NET_Decoder
+  NOSIER_NAME: BASE_Noiser
+  IMG_LOSS_NAME: MSELoss
+  WM_LOSS_NAME: MSELoss
+  ENCODER_LOSS: 0.1
+  DECODER_LOSS: 1
+
+DATA_LOADER:
+  DATA_DIR:  ../datasets
+
+Noiser:
+  SET_LIST: crop((0.2,0.3),(0.4,0.5))+cropout((0.11,0.22),(0.33,0.44))+dropout(0.2,0.3)+jpeg()
+
+
+DATA_SET:
+  H_IMG: 128
+  W_IMG: 128
+  H_WM: 8
+  W_WM: 8
+
+TRAIN:
+  EPOCHS: 300
+  DATA_DIR: ../datasets
+
+
+
+BASE_Decoder:
+  DECODER_CHANNELS: 64
+  DECODER_BLOCKS: 7
+
